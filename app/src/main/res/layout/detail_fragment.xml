@@ -60,7 +60,7 @@
         app:srcCompat="@drawable/share"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/imageView"
-        />
+        tools:ignore="VectorDrawableCompat" />
 
 
 </android.support.constraint.ConstraintLayout>

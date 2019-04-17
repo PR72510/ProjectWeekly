@@ -1,10 +1,14 @@
 package com.example.projectweekly;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +18,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.projectweekly.Model.Datum;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.concurrent.ExecutionException;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -24,6 +37,7 @@ public class DetailFragment extends Fragment {
     TextView tvId, tvFname, tvLname;
     ImageView imageView;
     ImageButton btnShare;
+    File file;
 
     @Nullable
     @Override
@@ -48,14 +62,46 @@ public class DetailFragment extends Fragment {
         Context context = imageView.getContext();
         if(context!=null){
             Glide.with(context)
+                    .asBitmap()
                     .load(datum.getAvatar())
                     .into(imageView);
+
+            Glide.with(context)
+                    .asBitmap()
+                    .load(datum.getAvatar())
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            OutputStream outputStream;
+
+                            try {
+                                file = new File( getActivity().getFilesDir(), "img_Share.jpg");
+                                boolean ifCreatedNewFile = file.createNewFile();
+
+                                outputStream = new FileOutputStream(file);
+                                resource.compress(Bitmap.CompressFormat.JPEG, 25, outputStream);
+                                outputStream.flush();
+                                outputStream.close();
+
+
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
         }
 
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.setType("image/*");
+                shareIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                        getContext(), BuildConfig.APPLICATION_ID + ".provider", file));
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(Intent.createChooser(shareIntent, "share Using"));
             }
         });
     }

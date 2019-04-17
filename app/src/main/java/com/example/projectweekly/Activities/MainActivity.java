@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -81,6 +82,12 @@ public class MainActivity extends AppCompatActivity implements LoginRegisterResp
         constraintLayout = findViewById(R.id.contain);
         networkStateReciever = new NetworkStateReciever();
         networkStateReciever.setOnNetworkStateChanged(this);
+
+        AnimationDrawable animationDrawable = (AnimationDrawable) constraintLayout.getBackground();
+        animationDrawable.setEnterFadeDuration(2500);
+        animationDrawable.setExitFadeDuration(5000);
+
+        animationDrawable.start();
 
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
