@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activities.MainActivity"
-    android:id="@+id/contain">
+    android:id="@+id/contain"
+    android:background="@drawable/animation_list">
+
 
     <EditText
         android:id="@+id/et_Email"
